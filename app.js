@@ -7,19 +7,47 @@ const canvasPosition = canvas.getBoundingClientRect();
 
 const explosions = [];
 
+const explotionTypes = [
+  {
+    imageSrc: "boom.png",
+    totalFrames: 5,
+    spriteHeight: 179,
+    spriteWidth: 200,
+    soundSrc: "boom.wav",
+    speed: 10,
+  },
+  {
+    imageSrc: "ice.png",
+    totalFrames: 10,
+    spriteHeight: 258,
+    spriteWidth: 258,
+    soundSrc: "ice.wav",
+    speed: 5,
+  },
+  {
+    imageSrc: "gas.png",
+    totalFrames: 9,
+    spriteHeight: 258,
+    spriteWidth: 258,
+    soundSrc: "gas.mp3",
+    speed: 5,
+  },
+];
+
 class Explosion {
   constructor(x, y) {
-    this.spriteWidth = 200;
-    this.spriteHeight = 179;
-    this.width = this.spriteWidth / 2;
-    this.height = this.spriteHeight / 2;
+    this.explosionType = explotionTypes[Math.floor(Math.random() * 3)];
+    this.spriteWidth = this.explosionType.spriteWidth;
+    this.spriteHeight = this.explosionType.spriteHeight;
+    this.width = this.spriteWidth * 0.8;
+    this.height = this.spriteHeight * 0.8;
     this.x = x;
     this.y = y;
     this.frame = 0;
     this.image = new Image();
-    this.image.src = "boom.png";
+    this.image.src = this.explosionType.imageSrc;
     this.sound = new Audio();
-    this.sound.src = "boom.wav";
+    this.sound.src = this.explosionType.soundSrc;
     this.timer = 0;
     this.angle = Math.random() * 6.2;
   }
@@ -27,7 +55,7 @@ class Explosion {
   update() {
     this.timer++;
     if (this.frame === 0) this.sound.play();
-    if (this.timer % 10 === 0) this.frame++;
+    if (this.timer % this.explosionType.speed === 0) this.frame++;
   }
 
   draw() {
@@ -65,7 +93,9 @@ function animate() {
   for (let index = 0; index < explosions.length; index++) {
     explosions[index].update();
     explosions[index].draw();
-    if (explosions[index].frame >= 6) {
+    if (
+      explosions[index].frame >= explosions[index].explosionType.totalFrames
+    ) {
       explosions.splice(index, 1);
       index--;
     }
